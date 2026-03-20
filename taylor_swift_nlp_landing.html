@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Taylor Swift NLP — The Eras Tour of Machine Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #faf6f0;
+    --blush: #f0d4d0;
+    --rose: #c97b84;
+    --deep-rose: #8b3a45;
+    --lavender: #c8b8d8;
+    --midnight: #1a0a2e;
+    --ink: #2a1520;
+    --gold: #c8a96e;
+    --soft-gold: #e8d5a8;
+    --folklore-grey: #8a8a8a;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ───────────────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    background: var(--midnight);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(201,123,132,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(200,184,216,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(200,169,110,0.08) 0%, transparent 70%);
+    animation: shimmer 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes shimmer {
+    0%   { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 1;   transform: scale(1.03); }
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+    opacity: 0;
+  }
+
+  @keyframes twinkle {
+    0%   { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 0.6; transform: scale(1.2); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeUp 1.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1.2s 0.2s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+    animation: fadeUp 1.2s 0.3s ease both;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--blush);
+  }
+
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--lavender);
+    margin-bottom: 2.5rem;
+    animation: fadeUp 1.2s 0.45s ease both;
+  }
+
+  .hero-acronym {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(200,184,216,0.6);
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
+    animation: fadeUp 1.2s 0.6s ease both;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 1.2s 0.75s ease both;
+  }
+
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--soft-gold);
+    letter-spacing: 0.1em;
+    background: rgba(200,169,110,0.06);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeUp 1.2s 1s ease both;
+    color: rgba(255,255,255,0.3);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50%       { opacity: 0.8; transform: scaleY(1.2); }
+  }
+
+  /* ── SECTIONS ───────────────────────────────────────────────────────── */
+  section { padding: 6rem 2rem; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    color: var(--ink);
+  }
+
+  .section-title em { color: var(--deep-rose); font-style: italic; }
+
+  /* ── INTRO ──────────────────────────────────────────────────────────── */
+  .intro { background: var(--cream); }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    margin-top: 3rem;
+  }
+
+  .intro-text p {
+    font-size: 1.15rem;
+    color: #4a3040;
+    margin-bottom: 1.2rem;
+    line-height: 1.8;
+  }
+
+  .results-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .result-card {
+    background: white;
+    border: 1px solid var(--blush);
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .result-card:hover {
+    transform: translateX(6px);
+    box-shadow: -4px 0 0 var(--rose), 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  .result-task {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .result-task span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--folklore-grey);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .result-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--deep-rose);
+  }
+
+  /* ── PIPELINE ───────────────────────────────────────────────────────── */
+  .pipeline { background: #f5f0ea; }
+
+  .pipeline-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .step {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rose), var(--lavender));
+  }
+
+  .step:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(139,58,69,0.12);
+  }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--rose);
+    margin-bottom: 0.8rem;
+  }
+
+  .step-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+
+  .step-desc {
+    font-size: 0.92rem;
+    color: #6a5060;
+    line-height: 1.6;
+  }
+
+  .code-block {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    background: var(--midnight);
+    color: #c8d8b8;
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .code-block .comment { color: #6a7a5a; }
+  .code-block .keyword { color: var(--blush); }
+  .code-block .string  { color: var(--soft-gold); }
+
+  /* ── MODELS ─────────────────────────────────────────────────────────── */
+  .models { background: var(--midnight); }
+  .models .section-label { color: var(--gold); }
+  .models .section-title { color: var(--cream); }
+  .models .section-title em { color: var(--lavender); }
+
+  .models-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .model-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    background: rgba(255,255,255,0.04);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .model-card:hover {
+    border-color: rgba(201,123,132,0.4);
+    background: rgba(255,255,255,0.07);
+  }
+
+  .model-card.featured {
+    border-color: rgba(200,169,110,0.4);
+    background: rgba(200,169,110,0.06);
+  }
+
+  .model-badge {
+    display: inline-block;
+    padding: 0.25rem 0.8rem;
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    background: rgba(201,123,132,0.2);
+    color: var(--blush);
+    border: 1px solid rgba(201,123,132,0.3);
+  }
+
+  .model-badge.gold {
+    background: rgba(200,169,110,0.2);
+    color: var(--soft-gold);
+    border-color: rgba(200,169,110,0.4);
+  }
+
+  .model-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .model-desc {
+    font-size: 0.95rem;
+    color: rgba(250,246,240,0.65);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .accuracy-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.4rem;
+  }
+
+  .accuracy-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--rose), var(--lavender));
+    transform-origin: left;
+    animation: barGrow 1.5s ease both;
+  }
+
+  @keyframes barGrow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  .accuracy-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(250,246,240,0.45);
+  }
+
+  /* ── STRUCTURE ──────────────────────────────────────────────────────── */
+  .structure { background: var(--cream); }
+
+  .file-tree {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--midnight);
+    color: #d0c8e0;
+    border-radius: 16px;
+    padding: 2.5rem;
+    line-height: 2;
+    margin-top: 3rem;
+  }
+
+  .tree-dir  { color: var(--soft-gold); font-weight: 500; }
+  .tree-file { color: #a8c8b0; }
+  .tree-comment { color: #6a6a7a; }
+  .tree-root { color: var(--blush); font-weight: 600; font-size: 0.9rem; }
+
+  /* ── GENERATION ─────────────────────────────────────────────────────── */
+  .generation { background: #f5f0ea; }
+
+  .song-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 680px;
+    margin: 3rem auto 0;
+    box-shadow: 0 8px 40px rgba(139,58,69,0.1);
+    position: relative;
+  }
+
+  .song-card::before {
+    content: '♫';
+    position: absolute;
+    top: 2rem; right: 2rem;
+    font-size: 2rem;
+    color: var(--blush);
+    opacity: 0.5;
+  }
+
+  .song-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--deep-rose);
+    margin-bottom: 0.3rem;
+  }
+
+  .song-artist {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--folklore-grey);
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+  }
+
+  .song-verse { margin-bottom: 1.5rem; }
+
+  .verse-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 0.4rem;
+  }
+
+  .verse-text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: #4a3040;
+    font-style: italic;
+  }
+
+  .song-stats {
+    display: flex;
+    gap: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--blush);
+    margin-top: 1.5rem;
+  }
+
+  .stat { text-align: center; }
+
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--deep-rose);
+    display: block;
+  }
+
+  .stat-lab {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    color: var(--folklore-grey);
+    text-transform: uppercase;
+  }
+
+  /* ── ALBUMS TABLE ───────────────────────────────────────────────────── */
+  .albums { background: var(--midnight); }
+  .albums .section-label { color: var(--gold); }
+  .albums .section-title { color: var(--cream); }
+
+  .albums-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .album-chip {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    background: rgba(255,255,255,0.04);
+    transition: all 0.25s;
+    cursor: default;
+  }
+
+  .album-chip:hover {
+    background: rgba(201,123,132,0.12);
+    border-color: rgba(201,123,132,0.4);
+    transform: translateY(-3px);
+  }
+
+  .album-chip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .album-chip-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.98rem;
+    color: var(--cream);
+    font-weight: 600;
+  }
+
+  /* ── FINDINGS ───────────────────────────────────────────────────────── */
+  .findings { background: var(--cream); }
+
+  .findings-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .finding {
+    background: white;
+    border-radius: 14px;
+    padding: 2rem;
+    border-left: 3px solid var(--rose);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .finding:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.07);
+  }
+
+  .finding-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .finding h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .finding p {
+    font-size: 0.9rem;
+    color: #6a5060;
+    line-height: 1.65;
+  }
+
+  /* ── AUTHORS ────────────────────────────────────────────────────────── */
+  .authors {
+    background: var(--midnight);
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+
+  .authors .section-label { color: var(--gold); }
+  .authors .section-title { color: var(--cream); }
+
+  .authors-list {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .author-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .author-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--rose), var(--lavender));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: white;
+    font-style: italic;
+  }
+
+  .author-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .author-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(250,246,240,0.45);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .intro-grid,
+    .models-grid,
+    .findings-list { grid-template-columns: 1fr; }
+    .pipeline-steps { grid-template-columns: 1fr; }
+    .albums-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="stars" id="stars"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Machine Learning · NLP · 2024</p>
+    <h1 class="hero-title">Taylor Swift<br/><em>NLP</em></h1>
+    <p class="hero-subtitle">The Eras Tour of Machine Learning</p>
+    <p class="hero-acronym">Text Organizing Using Recurrent networks</p>
+    <div class="hero-meta">
+      <span class="meta-pill">🎵 Album Classification</span>
+      <span class="meta-pill">✍️ Lyric Generation</span>
+      <span class="meta-pill">🧠 LSTM · Naive Bayes · SVM</span>
+      <span class="meta-pill">📀 11 Albums · ~240 Songs</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── INTRO ── -->
+<section class="intro">
+  <div class="container">
+    <p class="section-label">Overview</p>
+    <h2 class="section-title">What does this<br/><em>project do?</em></h2>
+    <div class="intro-grid">
+      <div class="intro-text">
+        <p>Taylor Swift is one of the most prolific singer-songwriters of her generation. With 11 studio albums, each with a distinctly different lyrical and musical style, her discography forms a rich dataset for Natural Language Processing.</p>
+        <p>This project explores whether machine learning models can learn to distinguish between albums based on lyrics alone — and whether they can generate new lyrics that sound like Taylor Swift.</p>
+        <p>We implemented and compared several NLP approaches, from the probabilistic simplicity of Naive Bayes to the sequential memory of LSTM networks.</p>
+      </div>
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-task">
+            Multinomial NB + Bagging
+            <span>9-class reduced label set</span>
+          </div>
+          <div class="result-score">66%</div>
+        </div>
+        <div class="result-card">
+          <div class="result-task">
+            LSTM Classification
+            <span>embedding · dropout · softmax</span>
+          </div>
+          <div class="result-score">64%</div>
+        </div>
+        <div class="result-card">
+          <div class="result-task">
+            LSTM Generation
+            <span>accuracy / perplexity</span>
+          </div>
+          <div class="result-score">0.755 <span style="font-size:1rem;color:#aaa">/ 2.68</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-task">
+            Support Vector Machine
+            <span>same reduced label set</span>
+          </div>
+          <div class="result-score">59%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PIPELINE ── -->
+<section class="pipeline">
+  <div class="container">
+    <p class="section-label">Text Preprocessing</p>
+    <h2 class="section-title">From raw lyrics to<br/><em>numerical vectors</em></h2>
+    <div class="pipeline-steps">
+      <div class="step">
+        <p class="step-num">STEP 01</p>
+        <h3 class="step-name">Stopword Removal</h3>
+        <p class="step-desc">English stopwords (NLTK) are removed — articles, prepositions, pronouns. Only meaningful content words remain.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">STEP 02</p>
+        <h3 class="step-name">Lowercase & Clean</h3>
+        <p class="step-desc">All text is lowercased and non-alphanumeric characters are stripped, producing a uniform, clean string.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">STEP 03</p>
+        <h3 class="step-name">Tokenization</h3>
+        <p class="step-desc">The cleaned string is split into individual word tokens using NLTK's <code>word_tokenize</code>.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">STEP 04</p>
+        <h3 class="step-name">Porter Stemmer</h3>
+        <p class="step-desc">Each token is reduced to its root form — "loves", "loving", "loved" all become "love" — reducing vocabulary size.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">STEP 05</p>
+        <h3 class="step-name">CountVectorizer</h3>
+        <p class="step-desc">Tokens are converted to sparse numerical vectors (5,000-word vocabulary). Each lyric chunk becomes a row of word counts.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">STEP 06</p>
+        <h3 class="step-name">Lyric Chunking</h3>
+        <p class="step-desc">Full lyrics are split into 35-word chunks (shuffled). This multiplies training samples and prevents memorisation.</p>
+        <div class="code-block">
+<span class="comment"># Before → 1 sample per song</span>
+<span class="comment"># After  → ~20 chunks per song</span>
+chunk_lyrics(lyrics, size=35)
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem; background:var(--midnight); border-radius:16px; padding:2rem; overflow-x:auto;">
+      <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:1rem;text-transform:uppercase;">Example transformation</p>
+      <div class="code-block" style="margin-top:0;border-radius:8px;">
+<span class="comment">Input:</span>  <span class="string">"Of those nights We ditch the whole scene It feels like one of those nights"</span>
+<span class="comment">Output:</span> <span class="string">"night ditch whole scene feel like one night wont sleepin"</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MODELS ── -->
+<section class="models">
+  <div class="container">
+    <p class="section-label">Classification Models</p>
+    <h2 class="section-title">Four approaches,<br/><em>one question</em></h2>
+    <div class="models-grid">
+      <div class="model-card featured">
+        <div class="model-badge gold">Best Result</div>
+        <h3 class="model-name">Multinomial NB + Bagging</h3>
+        <p class="model-desc">Probabilistic classifier based on Bayes' theorem. Word frequencies per album are used to compute posterior probabilities. Bagging further reduces variance.</p>
+        <div class="accuracy-bar">
+          <div class="accuracy-fill" style="width:66%"></div>
+        </div>
+        <div class="accuracy-label"><span>Accuracy</span><span>66.0%</span></div>
+      </div>
+      <div class="model-card">
+        <div class="model-badge">Deep Learning</div>
+        <h3 class="model-name">LSTM Classification</h3>
+        <p class="model-desc">Embedding layer → LSTM → Dropout(10%) → Dense(softmax). Reaches 100% training accuracy but test accuracy matches NB, at much greater cost.</p>
+        <div class="accuracy-bar">
+          <div class="accuracy-fill" style="width:64%"></div>
+        </div>
+        <div class="accuracy-label"><span>Accuracy</span><span>64.0%</span></div>
+      </div>
+      <div class="model-card">
+        <div class="model-badge">Baseline</div>
+        <h3 class="model-name">Multinomial NB (11 classes)</h3>
+        <p class="model-desc">Initial model with all 11 album labels. Albums with few songs (debut, folklore, evermore) dragged down overall performance.</p>
+        <div class="accuracy-bar">
+          <div class="accuracy-fill" style="width:63.5%"></div>
+        </div>
+        <div class="accuracy-label"><span>Accuracy</span><span>63.5%</span></div>
+      </div>
+      <div class="model-card">
+        <div class="model-badge">Comparison</div>
+        <h3 class="model-name">SVM</h3>
+        <p class="model-desc">Support Vector Machine on the same 9-class reduced dataset. Despite its theoretical advantages for text, it underperformed Naive Bayes here.</p>
+        <div class="accuracy-bar">
+          <div class="accuracy-fill" style="width:59%"></div>
+        </div>
+        <div class="accuracy-label"><span>Accuracy</span><span>59.0%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STRUCTURE ── -->
+<section class="structure">
+  <div class="container">
+    <p class="section-label">Repository</p>
+    <h2 class="section-title">Project <em>structure</em></h2>
+    <div class="file-tree">
+<span class="tree-root">taylor-swift-nlp/</span>
+│
+├── <span class="tree-dir">data/</span>
+│   ├── <span class="tree-file">songs_modif2.csv</span>         <span class="tree-comment">  # Main dataset — lyrics + album labels (9 classes)</span>
+│   ├── <span class="tree-file">songs_-_songs.csv</span>        <span class="tree-comment">  # Dataset for LSTM generation (PyTorch)</span>
+│   └── <span class="tree-file">cleaned.parquet</span>          <span class="tree-comment">  # Pre-cleaned dataset for LSTM generation (TensorFlow)</span>
+│
+├── <span class="tree-dir">notebooks/</span>
+│   ├── <span class="tree-file">Taylor_classification_A.ipynb</span>   <span class="tree-comment">  # MNB all labels, EDA, word clouds</span>
+│   ├── <span class="tree-file">Taylor_classification_B.ipynb</span>   <span class="tree-comment">  # Reduced labels, SVM, LSTM classification</span>
+│   ├── <span class="tree-file">lstm_pytorch.ipynb</span>              <span class="tree-comment">  # LSTM generation — PyTorch</span>
+│   └── <span class="tree-file">lstm_tensorflow.ipynb</span>           <span class="tree-comment">  # LSTM generation — TensorFlow (best output)</span>
+│
+├── <span class="tree-dir">src/</span>
+│   ├── <span class="tree-file">classifier.py</span>            <span class="tree-comment">  # MNB classifier — train + predict</span>
+│   └── <span class="tree-file">run_classifier.py</span>        <span class="tree-comment">  # Interactive CLI interface</span>
+│
+├── <span class="tree-dir">models/</span>                      <span class="tree-comment">  # Saved models (generated at runtime)</span>
+│   ├── <span class="tree-file">model_classification.pkl</span>
+│   └── <span class="tree-file">vectorizer.pkl</span>
+│
+├── <span class="tree-dir">results/figures/</span>            <span class="tree-comment">  # Confusion matrices, word clouds</span>
+├── <span class="tree-file">requirements.txt</span>
+└── <span class="tree-file">README.md</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── GENERATION ── -->
+<section class="generation">
+  <div class="container">
+    <p class="section-label">LSTM Text Generation</p>
+    <h2 class="section-title">Writing like <em>Taylor Swift</em></h2>
+    <p style="max-width:600px;font-size:1.05rem;color:#4a3040;line-height:1.8;">The TensorFlow LSTM was trained for 50 epochs on the complete discography to predict the next word in a sequence. Starting from a seed word, it generates song lyrics iteratively.</p>
+    <div class="song-card">
+      <p class="song-title">Dreams Are Just Met</p>
+      <p class="song-artist">tAylorSwIft — generated by LSTM</p>
+      <div class="song-verse">
+        <p class="verse-label">Verse 1</p>
+        <p class="verse-text">The first time you ever saw me cry<br/>Dreams are you just met me in a crowded room<br/>Out and a girl dress, yeah yeah<br/>Just like bad time is cold hard</p>
+      </div>
+      <div class="song-verse">
+        <p class="verse-label">Chorus</p>
+        <p class="verse-text">Not many golden, only see you<br/>See us when I was dead<br/>I do not know how to be whole life girl<br/>I do not wanna lose you around at midnight</p>
+      </div>
+      <div class="song-verse">
+        <p class="verse-label">Bridge</p>
+        <p class="verse-text">I dreamed of it all too well, yeah yeah yeah</p>
+      </div>
+      <div class="song-stats">
+        <div class="stat">
+          <span class="stat-val">50</span>
+          <span class="stat-lab">Epochs</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">0.755</span>
+          <span class="stat-lab">Accuracy</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">2.681</span>
+          <span class="stat-lab">Perplexity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ALBUMS ── -->
+<section class="albums">
+  <div class="container">
+    <p class="section-label">Dataset</p>
+    <h2 class="section-title">9 albums, <em>one model</em></h2>
+    <p style="color:rgba(250,246,240,0.6);font-size:1rem;max-width:600px;line-height:1.7;">Label reduction improved accuracy by merging lyrically similar albums and removing underrepresented ones. <em>folklore</em> + <em>evermore</em> → <strong style="color:var(--blush)">folkmore</strong>.</p>
+    <div class="albums-grid">
+      <div class="album-chip">
+        <p class="album-chip-label">2008</p>
+        <p class="album-chip-name">Fearless (Taylor's Version)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2010</p>
+        <p class="album-chip-name">Speak Now (Taylor's Version)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2012</p>
+        <p class="album-chip-name">Red (Taylor's Version)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2014</p>
+        <p class="album-chip-name">nineteeneightynine (TV)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2017</p>
+        <p class="album-chip-name">reputation</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2019</p>
+        <p class="album-chip-name">Lover</p>
+      </div>
+      <div class="album-chip" style="border-color:rgba(201,123,132,0.4);background:rgba(201,123,132,0.08)">
+        <p class="album-chip-label">2020 — merged</p>
+        <p class="album-chip-name" style="color:var(--blush)">folkmore (folklore + evermore)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2022</p>
+        <p class="album-chip-name">Midnights (3am Edition)</p>
+      </div>
+      <div class="album-chip">
+        <p class="album-chip-label">2024</p>
+        <p class="album-chip-name">The Tortured Poets Department</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINDINGS ── -->
+<section class="findings">
+  <div class="container">
+    <p class="section-label">Key Findings</p>
+    <h2 class="section-title">What we <em>learned</em></h2>
+    <div class="findings-list">
+      <div class="finding">
+        <p class="finding-icon">🧹</p>
+        <h3>Preprocessing is critical</h3>
+        <p>Stopword removal and stemming are essential for reducing noise. Generic emotional words ("love", "know", "never") appear across all albums and naturally limit classification accuracy.</p>
+      </div>
+      <div class="finding">
+        <p class="finding-icon">⚖️</p>
+        <h3>Simple models compete</h3>
+        <p>Multinomial NB achieves nearly identical accuracy to LSTM classification, with a fraction of the computational cost. Complexity doesn't always win.</p>
+      </div>
+      <div class="finding">
+        <p class="finding-icon">📊</p>
+        <h3>Data imbalance matters</h3>
+        <p>Albums with more songs (re-recorded Taylor's Versions include vault tracks) consistently show higher per-class recall. The debut album performed poorly due to too few training samples.</p>
+      </div>
+      <div class="finding">
+        <p class="finding-icon">🏷️</p>
+        <h3>Label engineering helps</h3>
+        <p>Merging lyrically similar albums (folklore + evermore → folkmore) and dropping the debut improved overall accuracy and reduced confusion between adjacent labels.</p>
+      </div>
+      <div class="finding">
+        <p class="finding-icon">🔁</p>
+        <h3>LSTM generation is coherent</h3>
+        <p>At 50 epochs, the TensorFlow LSTM generates text that follows Taylor Swift's lyrical patterns, though it sometimes produces surreal or nonsensical phrases.</p>
+      </div>
+      <div class="finding">
+        <p class="finding-icon">🎯</p>
+        <h3>Room for improvement</h3>
+        <p>Artist-specific stop words, TF-IDF weighting, pre-trained embeddings, and more training epochs could all improve both classification and generation quality.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AUTHORS ── -->
+<section class="authors">
+  <p class="section-label">Team</p>
+  <h2 class="section-title" style="margin-bottom:0.5rem;">Built by <em>Swifties</em></h2>
+  <p style="color:rgba(250,246,240,0.5);font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.1em;">Machine Learning course · 2024</p>
+  <div class="authors-list">
+    <div class="author-card">
+      <div class="author-avatar">L</div>
+      <p class="author-name">Lucía de Lamadrid</p>
+      <p class="author-role">Machine Learning · 2024</p>
+    </div>
+    <div class="author-card">
+      <div class="author-avatar">P</div>
+      <p class="author-name">Paula de Blas Rioja</p>
+      <p class="author-role">Machine Learning · 2024</p>
+    </div>
+  </div>
+  <p style="margin-top:4rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(250,246,240,0.25);letter-spacing:0.15em;">All song lyrics © Taylor Swift / Republic Records / Big Machine Records. Educational use only.</p>
+</section>
+
+<script>
+  // Generate stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --d:${2 + Math.random()*4}s;
+      animation-delay:${Math.random()*5}s;
+      width:${1 + Math.random()*2}px;
+      height:${1 + Math.random()*2}px;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // Animate accuracy bars on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.accuracy-fill').forEach(bar => {
+          bar.style.animationPlayState = 'running';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.model-card').forEach(card => observer.observe(card));
+</script>
+</body>
+</html>
