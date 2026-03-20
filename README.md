@@ -1,4 +1,6 @@
-## 🌐 [View project page →](https://paudbr.github.io/taylor-swift-nlp/)
+[![Project Page](https://img.shields.io/badge/🌐_Project_Page-Visit-c97b84?style=for-the-badge)](https://paudbr.github.io/LSTM_text_classification_prediction/)
+[![Made with Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Framework](https://img.shields.io/badge/TensorFlow_%7C_PyTorch-LSTM-FF6F00?style=for-the-badge&logo=tensorflow)](https://tensorflow.org)
 # 🎤 Taylor Swift NLP — The Eras Tour of Machine Learning
 
 > *Text Organizing Using Recurrent networks*
